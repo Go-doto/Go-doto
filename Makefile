@@ -33,10 +33,6 @@ queue-solved: ## check queue Solved topic
 queue-unsolved: ## check queue Unsolved topic
 		bash ./scripts/queue-new.sh Unsolved
 
-.PHONY: run
-run: ## run app commands. make run command=hello
-		GO111MODULE=on ${GOROOT}/bin/go run cmd/main.go $(command)
-
 .PHONY: help
 help: ## Display this help message
 	@cat $(MAKEFILE_LIST) | grep -e "^[a-zA-Z_\-]*: *.*## *" | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

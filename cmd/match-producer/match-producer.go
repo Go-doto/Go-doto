@@ -1,10 +1,10 @@
-package cmd
+package main
 
 import (
 	"context"
 	"fmt"
-	kafka "github.com/segmentio/kafka-go"
-	"github.com/spf13/cobra"
+	"github.com/joho/godotenv"
+	"github.com/segmentio/kafka-go"
 	"log"
 	"os"
 	"strconv"
@@ -13,17 +13,11 @@ import (
 
 const topic = "New"
 
-// helloCmd represents the hello command
-var matchProducerCmd = &cobra.Command{
-	Use:   "match-producer",
-	Short: "Run match history producer",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		runProducer()
-	},
-}
-
-func runProducer() {
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	conn, err := kafka.DialLeader(context.Background(), os.Getenv("KAFKA_NETWORK"), os.Getenv("KAFKA_HOST"), topic, 0)
 	if err != nil {
 		log.Fatal(err)
@@ -51,8 +45,4 @@ func runProducer() {
 
 	}
 
-}
-
-func init() {
-	RootCmd.AddCommand(matchProducerCmd)
 }

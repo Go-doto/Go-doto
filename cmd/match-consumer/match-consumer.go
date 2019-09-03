@@ -1,10 +1,10 @@
-package cmd
+package main
 
 import (
 	"context"
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"sync"
@@ -12,17 +12,11 @@ import (
 
 const inputTopic = "New"
 
-// helloCmd represents the hello command
-var matchConsumerCmd = &cobra.Command{
-	Use:   "match-consumer",
-	Short: "Run match history consumer",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		runConsumer()
-	},
-}
-
-func runConsumer() {
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	//  Kafka subscriber (consumer)
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{os.Getenv("KAFKA_HOST")},
@@ -59,8 +53,4 @@ func runConsumer() {
 
 func printer(m kafka.Message) {
 	fmt.Println(string(m.Value))
-}
-
-func init() {
-	RootCmd.AddCommand(matchConsumerCmd)
 }
