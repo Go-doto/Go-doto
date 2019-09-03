@@ -18,7 +18,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -72,7 +71,7 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		log.Print(err)
-		os.Exit(1)
+		return APIResponse{}, err
 	}
 
 	// build query params
