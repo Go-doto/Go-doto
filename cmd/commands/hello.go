@@ -12,7 +12,7 @@ var helloCmd = &cobra.Command{
 	Short: "says hello",
 	Long:  `This subcommand says hello`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello!")
+		fmt.Println()
 	},
 }
 
