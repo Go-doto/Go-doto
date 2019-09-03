@@ -44,7 +44,7 @@ func main() {
 	}
 	wg.Wait()
 
-	err := r.Close()
+	err = r.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
