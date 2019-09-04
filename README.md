@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Go-doto/Go-doto.svg?branch=master)](https://travis-ci.org/Go-doto/Go-doto)
+
 # Go-doto
 
 ## Project Setup
