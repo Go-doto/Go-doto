@@ -5,14 +5,14 @@ import (
 	"errors"
 )
 
-func GetMatchDetails(client ClientInterface, matchId string) (MatchResult, error) {
+func GetMatchDetails(client ClientInterface, matchId MatchId) (MatchResult, error) {
 	matchDetails := MatchResult{}
-	if matchId == "" {
+	if matchId == 0 {
 		return matchDetails, errors.New("required matchId")
 	}
 
 	resp, err := client.MakeRequest("GetMatchDetails", map[string]string{
-		"match_id": matchId,
+		"match_id": matchId.ToString(),
 	})
 	if err != nil {
 		return matchDetails, err

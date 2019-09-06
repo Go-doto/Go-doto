@@ -1,5 +1,7 @@
 package dota_api
 
+import "strconv"
+
 // http://www.sharonkuo.me/dota2/matchdetails.html info from here.
 
 type GameMode int
@@ -100,3 +102,9 @@ type TowerStatus uint16
 
 // TODO: add methods that read information from bits
 type BarracksStatus uint16
+
+type MatchId int64
+
+func (m MatchId) ToString() string {
+	return strconv.FormatInt(int64(m), 10)
+}

@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-	client, _ := dotaApi.NewClientWithToken("tokenstring")
+	client, _ := dotaApi.NewClientWithToken("token")
 
-	resp, err := dotaApi.GetMatchDetails(client, "4949341670")
+	resp, err := dotaApi.GetMatchDetails(client, dotaApi.MatchId(4949341670))
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(0)
