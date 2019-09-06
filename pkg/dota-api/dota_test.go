@@ -1,6 +1,8 @@
 package dota_api
 
-import "testing"
+import (
+	"testing"
+)
 
 var postitions = map[PlayerSlot]uint{
 	0:   0,
@@ -36,5 +38,12 @@ func TestPlayerSlot_GetPosition(t *testing.T) {
 		if slot.GetPosition() != pos {
 			t.Error("Invalid position")
 		}
+	}
+}
+
+func TestMatchId_ToString(t *testing.T) {
+	matchId := MatchId(4000000000)
+	if matchId.ToString() != "4000000000" {
+		t.Error("invalid ToString conversion")
 	}
 }
