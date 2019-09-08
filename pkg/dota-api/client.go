@@ -87,6 +87,7 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	if err != nil {
 		return APIResponse{}, err
 	}
+
 	defer resp.Body.Close()
 
 	c.rateLimiter.update()
@@ -98,13 +99,12 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 
 	var apiResponse APIResponse
 	json.Unmarshal(body, &apiResponse)
-
 	return apiResponse, nil
 }
 
 // sleep function for rate limiter
 func (s *rateLimiter) wait() {
-	if s.requestsCount == 3 {
+	if s.requestsCount == 5 {
 		secs := time.Since(s.lastRequestTime).Seconds()
 		ms := int((1 - secs) * 1000)
 		if ms > 0 {

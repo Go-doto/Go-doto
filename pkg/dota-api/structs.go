@@ -10,19 +10,25 @@ type Error struct {
 	ErrorMsg string `json:"error"`
 }
 
+type MatchHistoryBySequenceNo struct {
+	MatchesResult []MatchResult `json:"matches"`
+	Status        int           `json:"status"`
+	StatusDetail  string        `json:"statusDetail"`
+}
+
 type MatchResult struct {
-	Error
+	Error                 Error `json:"error"`
 	Players               []Player
 	Season                uint `json:"item_0,omitempty"`
 	RadiantWin            bool `json:"radiant_win"`
 	Duration              uint
-	MatchStart            uint           `json:"start_time"`
-	MatchId               uint64         `json:"match_id"`
-	MatchSequenceNo       uint           `json:"match_seq_num"`
-	TowerStatusRadiant    TowerStatus    `json:"tower_status_radiant"`
-	TowerStatusDire       TowerStatus    `json:"tower_status_dire"`
-	BarracksStatusRadiant BarracksStatus `json:"barracks_status_radiant"`
-	BarracksStatusDire    BarracksStatus `json:"barracks_status_dire"`
+	MatchStart            uint            `json:"start_time"`
+	MatchId               MatchId         `json:"match_id"`
+	MatchSequenceNo       MatchSequenceNo `json:"match_seq_num"`
+	TowerStatusRadiant    TowerStatus     `json:"tower_status_radiant"`
+	TowerStatusDire       TowerStatus     `json:"tower_status_dire"`
+	BarracksStatusRadiant BarracksStatus  `json:"barracks_status_radiant"`
+	BarracksStatusDire    BarracksStatus  `json:"barracks_status_dire"`
 	Cluster               uint
 	FirstBloodTime        int       `json:"first_blood_time"`
 	LobbyType             LobbyType `json:"lobby_type"`
@@ -35,7 +41,7 @@ type MatchResult struct {
 }
 
 type Player struct {
-	AccountId     uint32     `json:"account_id"`
+	AccountId     AccountId  `json:"account_id"`
 	PlayerSlot    PlayerSlot `json:"player_slot"`
 	HeroId        uint       `json:"hero_id"`
 	Item0         uint       `json:"item_0"`

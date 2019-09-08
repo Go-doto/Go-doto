@@ -108,3 +108,11 @@ type MatchId int64
 func (m MatchId) ToString() string {
 	return strconv.FormatInt(int64(m), 10)
 }
+
+type MatchSequenceNo int64
+
+func (m MatchSequenceNo) ToString() string {
+	return strconv.FormatInt(int64(m), 10)
+}
+
+type AccountId uint32
