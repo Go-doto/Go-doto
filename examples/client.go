@@ -10,10 +10,10 @@ import (
 func main() {
 	client, _ := dotaApi.NewClientWithToken("token")
 
-	resp, err := dotaApi.GetMatchDetails(client, dotaApi.MatchId(4949341670))
+	resp, err := dotaApi.GetMatchHistoryBySequenceNum(client, dotaApi.MatchSequenceNo(4151934576), 100)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(0)
 	}
-	fmt.Println(resp)
+	fmt.Printf("%+v\n", resp)
 }
