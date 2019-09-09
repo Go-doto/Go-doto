@@ -82,17 +82,19 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	}
 	req.URL.RawQuery = q.Encode()
 
-	// send request
 	resp, err := c.Client.Do(req)
+	// send request
+	defer resp.Body.Close()
 	if err != nil {
 		return APIResponse{}, err
 	}
 
-	defer resp.Body.Close()
-
+	if resp.StatusCode > 400 {
+		return APIResponse{}, errors.New(fmt.Sprintf("Server error. Code %d", resp.StatusCode))
+	}
 	c.rateLimiter.update()
-
 	body, err := ioutil.ReadAll(resp.Body)
+
 	if err != nil {
 		return APIResponse{}, err
 	}
