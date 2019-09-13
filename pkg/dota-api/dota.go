@@ -1,6 +1,9 @@
 package dota_api
 
-import "strconv"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 // http://www.sharonkuo.me/dota2/matchdetails.html info from here.
 
@@ -104,6 +107,20 @@ type TowerStatus uint16
 type BarracksStatus uint16
 
 type MatchId int64
+
+func CreateMatchId(match []byte) (MatchId, error) {
+	var matchId MatchId
+	err := json.Unmarshal(match, &matchId)
+
+	return matchId, err
+}
+
+func CreateMatchId(match int64) (MatchId, error) {
+	var matchId MatchId
+	err := json.Unmarshal(match, &matchId)
+
+	return matchId, err
+}
 
 func (m MatchId) ToString() string {
 	return strconv.FormatInt(int64(m), 10)

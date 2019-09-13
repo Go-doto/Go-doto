@@ -36,14 +36,8 @@ type ClientInterface interface {
 
 // client struct
 type client struct {
-	Token       string
-	Client      *http.Client
-	rateLimiter *rateLimiter
-}
-
-type rateLimiter struct {
-	requestsCount   int
-	lastRequestTime time.Time
+	Token  string
+	Client *http.Client
 }
 
 // Create new client instance from string token
@@ -56,15 +50,13 @@ func NewClientWithToken(token string) (*client, error) {
 		Timeout: requestTimeout * time.Second,
 	}
 	return &client{
-		Token:       token,
-		Client:      &httpClient,
-		rateLimiter: &rateLimiter{},
+		Token:  token,
+		Client: &httpClient,
 	}, nil
 }
 
 // Create Make request to specific steam API method with get query params.
 func (c *client) MakeRequest(method string, params map[string]string) (APIResponse, error) {
-	c.rateLimiter.wait()
 	// create request url
 	endpoint := fmt.Sprintf(apiURL, method, apiVersion)
 	// create request instance than add query params.
@@ -92,7 +84,6 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	if resp.StatusCode > 400 {
 		return APIResponse{}, errors.New(fmt.Sprintf("Server error. Code %d", resp.StatusCode))
 	}
-	c.rateLimiter.update()
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
@@ -102,25 +93,4 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	var apiResponse APIResponse
 	json.Unmarshal(body, &apiResponse)
 	return apiResponse, nil
-}
-
-// sleep function for rate limiter
-func (s *rateLimiter) wait() {
-	if s.requestsCount == 5 {
-		secs := time.Since(s.lastRequestTime).Seconds()
-		ms := int((1 - secs) * 1000)
-		if ms > 0 {
-			duration := time.Duration(ms * int(time.Millisecond))
-			log.Println("Alarm! 3 requests per second. Sleeping for", ms, "ms")
-			time.Sleep(duration)
-		}
-
-		s.requestsCount = 0
-	}
-}
-
-// every request updates rateLimiter struct
-func (s *rateLimiter) update() {
-	s.requestsCount++
-	s.lastRequestTime = time.Now()
 }

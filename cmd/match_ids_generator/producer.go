@@ -2,6 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/Go-doto/Go-doto/internal"
+	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 	"github.com/subosito/gotenv"
 	"log"
@@ -16,6 +19,12 @@ func failOnError(err error, msg string) {
 
 func init() {
 	gotenv.Load()
+	viper.AddConfigPath(os.Getenv("CONFIG_FILE_PATH"))
+	viper.SetConfigName(os.Getenv("CONFIG_FILE_NAME"))
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	}
 }
 
 func main() {
@@ -37,8 +46,11 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	//code below should be generator :D
-	gameId, err := json.Marshal(4000000124)
+	var startNum int64 = 400000000
+	var amount int = viper.GetInt("countOfMatchesToParse")
+	task := internal.NewTask(startNum, amount)
+
+	jsonTask, err := json.Marshal(task)
 	err = ch.Publish(
 		"",
 		q.Name,
@@ -46,8 +58,8 @@ func main() {
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        gameId,
+			Body:        jsonTask,
 		})
-	log.Printf(" [x] Sent %d", gameId)
+	log.Printf(" [x] Sent %d", jsonTask)
 	failOnError(err, "Failed to publish a message")
 }
