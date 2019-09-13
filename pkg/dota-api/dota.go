@@ -115,13 +115,6 @@ func CreateMatchId(match []byte) (MatchId, error) {
 	return matchId, err
 }
 
-func CreateMatchId(match int64) (MatchId, error) {
-	var matchId MatchId
-	err := json.Unmarshal(match, &matchId)
-
-	return matchId, err
-}
-
 func (m MatchId) ToString() string {
 	return strconv.FormatInt(int64(m), 10)
 }
