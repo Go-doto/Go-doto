@@ -50,7 +50,7 @@ func main() {
 	var amount int = viper.GetInt("countOfMatchesToParse")
 	task := internal.NewTask(startNum, amount)
 
-	jsonTask, err := json.Marshal(task)
+	jsonTask, err := json.Marshal(&task)
 	err = ch.Publish(
 		"",
 		q.Name,
