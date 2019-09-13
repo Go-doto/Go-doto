@@ -21,18 +21,6 @@ build: ## build environment and initialize composer and project dependencies
 up: ## spin up environment
 		docker-compose up -d
 
-.PHONY: queue-new
-queue-new: ## check queue New topic
-		bash ./scripts/queue-new.sh New
-
-.PHONY: queue-solved
-queue-solved: ## check queue Solved topic
-		bash ./scripts/queue-new.sh Solved
-
-.PHONY: queue-unsolved
-queue-unsolved: ## check queue Unsolved topic
-		bash ./scripts/queue-new.sh Unsolved
-
 .PHONY: test
 test: ## check queue Unsolved topic
 		GO111MODULE=on ${GOROOT}/bin/go test -v -race ./...
