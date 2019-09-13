@@ -82,29 +82,31 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	}
 	req.URL.RawQuery = q.Encode()
 
-	// send request
 	resp, err := c.Client.Do(req)
+	// send request
+	defer resp.Body.Close()
 	if err != nil {
 		return APIResponse{}, err
 	}
-	defer resp.Body.Close()
 
+	if resp.StatusCode > 400 {
+		return APIResponse{}, errors.New(fmt.Sprintf("Server error. Code %d", resp.StatusCode))
+	}
 	c.rateLimiter.update()
-
 	body, err := ioutil.ReadAll(resp.Body)
+
 	if err != nil {
 		return APIResponse{}, err
 	}
 
 	var apiResponse APIResponse
 	json.Unmarshal(body, &apiResponse)
-
 	return apiResponse, nil
 }
 
 // sleep function for rate limiter
 func (s *rateLimiter) wait() {
-	if s.requestsCount == 3 {
+	if s.requestsCount == 5 {
 		secs := time.Since(s.lastRequestTime).Seconds()
 		ms := int((1 - secs) * 1000)
 		if ms > 0 {
