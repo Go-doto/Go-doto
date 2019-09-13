@@ -1,10 +1,10 @@
 package internal
 
 type parseMatchTask struct {
-	startNum int64
-	amount   int
+	StartNum int64 `json:"startNum"`
+	Amount   int   `json:"amount"`
 }
 
 func NewTask(startNum int64, amount int) *parseMatchTask {
-	return &parseMatchTask{startNum: startNum, amount: amount}
+	return &parseMatchTask{StartNum: startNum, Amount: amount}
 }
