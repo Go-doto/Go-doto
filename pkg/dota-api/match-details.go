@@ -1,13 +1,9 @@
 package dota_api
 
-import (
-	"errors"
-)
-
 func GetMatchDetails(client ClientInterface, matchId MatchId) (MatchResult, error) {
 	matchDetails := MatchResult{}
 	if matchId == 0 {
-		return matchDetails, errors.New("required matchId")
+		return matchDetails, ValidationError{"required matchId"}
 	}
 
 	resp, err := client.MakeRequest("GetMatchDetails", map[string]string{
@@ -19,14 +15,14 @@ func GetMatchDetails(client ClientInterface, matchId MatchId) (MatchResult, erro
 	err = matchDetails.UnmarshalJSON(resp.Result)
 
 	if err != nil {
-		return matchDetails, err
+		return matchDetails, UnknownError{Inner: err, Reason: "unmarshal error"}
 	}
 
 	if matchDetails.Error != "" {
-		return matchDetails, errors.New(matchDetails.Error)
+		return matchDetails, ValidationError{matchDetails.Error}
 	}
 	if matchDetails.MatchId == 0 {
-		return matchDetails, errors.New("match not parsed")
+		return matchDetails, ValidationError{"match not parsed. Validate data"}
 	}
 	return matchDetails, err
 }

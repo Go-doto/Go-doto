@@ -1,6 +1,7 @@
 package dota_api
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Go-doto/Go-doto/pkg/dota-api/mocks"
 	"net/http"
@@ -19,8 +20,9 @@ func TestGetMatchDetails(t *testing.T) {
 	apiURL = ts.URL + "/%s/%s"
 	client, _ := NewClientWithToken("123")
 	details, err := GetMatchDetails(client, 0)
-	if err == nil {
-		t.Error("expected error when matchId is empty")
+	var validationError ValidationError
+	if !errors.As(err, &validationError) {
+		t.Error("expected error when matchId is empty", err)
 	}
 	details, err = GetMatchDetails(client, MatchId(41242))
 	if err != nil {
