@@ -92,6 +92,8 @@ func main() {
 		if action, ok := commands[args[1]]; ok {
 			action()
 		}
+	} else {
+		fmt.Println("Use: `<command> up` or `<command> down`")
 	}
 
 }
