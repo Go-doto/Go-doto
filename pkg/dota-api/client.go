@@ -13,7 +13,6 @@ client for Dota 2 api.
 */
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -44,7 +43,7 @@ type client struct {
 // Default client has 10 seconds timeout.
 func NewClientWithToken(token string) (*client, error) {
 	if token == "" {
-		return &client{}, errors.New("token is required")
+		return &client{}, ValidationError{"token is required"}
 	}
 	httpClient := http.Client{
 		Timeout: requestTimeout * time.Second,
@@ -63,7 +62,7 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		log.Print(err)
-		return APIResponse{}, err
+		return APIResponse{}, HttpClientError{err}
 	}
 
 	// build query params
@@ -75,22 +74,29 @@ func (c *client) MakeRequest(method string, params map[string]string) (APIRespon
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := c.Client.Do(req)
+	if err != nil {
+		return APIResponse{}, HttpClientError{err}
+	}
 	// send request
 	defer resp.Body.Close()
-	if err != nil {
-		return APIResponse{}, err
-	}
 
 	if resp.StatusCode > 400 {
-		return APIResponse{}, errors.New(fmt.Sprintf("Server error. Code %d", resp.StatusCode))
+		if resp.StatusCode == 403 {
+			return APIResponse{}, AccessForbiddenError{Reason: "Access is denied. Retrying will not help. Please verify your token"}
+		} else {
+			return APIResponse{}, ServerError{Reason: "Server error", Code: resp.StatusCode}
+		}
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return APIResponse{}, err
+		return APIResponse{}, UnknownError{Inner: err, Reason: "read from response body error"}
 	}
 
 	var apiResponse APIResponse
-	json.Unmarshal(body, &apiResponse)
+	err = json.Unmarshal(body, &apiResponse)
+	if err != nil {
+		return APIResponse{}, UnknownError{Inner: err, Reason: "json unmarshal error"}
+	}
 	return apiResponse, nil
 }
