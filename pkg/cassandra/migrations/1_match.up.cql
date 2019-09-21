@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS matches (
-  match_id bigint PRIMARY KEY,
+  PRIMARY KEY (match_id, match_seq_num),
+  match_id bigint,
   match_seq_num bigint,
   radiant_win boolean,
   pre_game_duration int,
