@@ -6,6 +6,7 @@ import (
 	"github.com/subosito/gotenv"
 	"log"
 	"os"
+	"time"
 )
 
 func failOnError(err error, msg string) {
@@ -27,8 +28,18 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare(
+	parsingQueue, err := ch.QueueDeclare(
 		os.Getenv("GAMES_PARSE_QUEUE_NAME"),
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	failOnError(err, "Failed to declare a queue")
+
+	workerQueue, err := ch.QueueDeclare(
+		os.Getenv("WORKER_QUEUE"),
 		false,
 		false,
 		false,
@@ -44,8 +55,8 @@ func main() {
 	)
 	failOnError(err, "Failed to set QoS")
 
-	msgs, err := ch.Consume(
-		q.Name,
+	messages, err := ch.Consume(
+		parsingQueue.Name,
 		"",
 		false,
 		false,
@@ -58,11 +69,21 @@ func main() {
 	forever := make(chan bool)
 
 	go func() {
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
-			DotaParser.HandleGame(d.Body)
+		for message := range messages {
+			log.Printf("Received a message: %s", message.Body)
+			DotaParser.HandleGame(message.Body)
+			err = ch.Publish(
+				"",
+				workerQueue.Name,
+				false,
+				false,
+				amqp.Publishing{
+					ContentType: "text/plain",
+					Body:        make([]byte, 0),
+				})
+			time.Sleep(time.Minute)
 			log.Printf("Done")
-			d.Ack(false)
+			message.Ack(false)
 		}
 	}()
 

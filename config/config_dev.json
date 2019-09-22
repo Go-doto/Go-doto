@@ -1,4 +1,5 @@
 {
   "lastParsedMatchIdKey" : "last_parsed_match_id",
-  "countOfMatchesToParse": 100
+  "countOfMatchesToParse": 100,
+  "queriesLimit" : 5
 }
