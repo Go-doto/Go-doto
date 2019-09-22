@@ -30,7 +30,7 @@ func init() {
 }
 
 func main() {
-	forceStart := flag.Bool("forceStart", true, "Use forceStart to generate task even if worker queue empty")
+	forceStart := flag.Bool("forceStart", false, "Use forceStart to generate task even if worker queue empty")
 	conn, err := amqp.Dial(os.Getenv("RABBITMQ_URL"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
